@@ -4,11 +4,6 @@ param(
 
 $SetupExe = Join-Path $MediaPath "setup.exe"
 
-if (!(Test-Path $SetupExe)) {
-    Write-LogEntry -Value "ERROR: setup.exe not found at $SetupExe"
-    exit 1
-}
-
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # Log File Info
@@ -61,6 +56,11 @@ Write-LogEntry -Value "Hostname: $($env:COMPUTERNAME)"
 $procArch = $env:PROCESSOR_ARCHITECTURE
 Write-LogEntry -Value "Processor Architecture: $procArch"
 $scriptStartTime = Get-Date
+
+if (!(Test-Path $SetupExe)) {
+    Write-LogEntry -Value "ERROR: setup.exe not found at $SetupExe"
+    exit 1
+}
 
 # Get current windows version, build and edition
 $winVersion = [version](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").LCUVer
