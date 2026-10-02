@@ -2,8 +2,6 @@ param(
     [string]$MediaPath
 )
 
-$SetupExe = Join-Path $MediaPath "setup.exe"
-
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # Log File Info
@@ -56,6 +54,13 @@ Write-LogEntry -Value "Hostname: $($env:COMPUTERNAME)"
 $procArch = $env:PROCESSOR_ARCHITECTURE
 Write-LogEntry -Value "Processor Architecture: $procArch"
 $scriptStartTime = Get-Date
+
+if (-not $MediaPath) {
+    write-Host "MediaPath parameter not provided. Using default path: C:\Windows\Temp"
+    $mediaPath = "C:\Windows\Temp"
+}
+
+$SetupExe = Join-Path $MediaPath "setup.exe"
 
 if (!(Test-Path $SetupExe)) {
     Write-LogEntry -Value "ERROR: setup.exe not found at $SetupExe"
