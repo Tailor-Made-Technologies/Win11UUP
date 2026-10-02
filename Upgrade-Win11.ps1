@@ -60,11 +60,16 @@ $scriptStartTime = Get-Date
 if (!(Test-Path $SetupExe)) {
     Write-LogEntry -Value "ERROR: setup.exe not found at $SetupExe"
     exit 1
+} else {
+    Write-LogEntry -Value "setup.exe found at $SetupExe"
 }
 
 # Get current windows version, build and edition
 $winVersion = [version](Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").LCUVer
-$winEdition = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").EditionID
+$CurrentVersion = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+$Build = [int]$CurrentVersion.CurrentBuild
+$UBR = [int]$CurrentVersion.UBR
+$winVersion = [version]"10.0.$Build.$UBR"
 Write-LogEntry -Value "Current Windows Edition: $winEdition"
 Write-LogEntry -Value "Current Windows Version: $winVersion"
 
@@ -72,12 +77,6 @@ Write-LogEntry -Value "Current Windows Version: $winVersion"
 if ($winVersion -ge [version]"10.0.26200.0") {
   Write-LogEntry -Value "Device already running Windows 11 25H2. Exiting. (Version detected: $winVersion)"
   exit 0
-}
-
-$SetupExe = Join-Path $PSScriptRoot "setup.exe"
-if (!(Test-Path $SetupExe)) {
-  Write-LogEntry -Value "ERROR: setup.exe not found at $SetupExe"
-  exit 1
 }
 
 Start-Process `
